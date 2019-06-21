@@ -16,6 +16,7 @@ class CreateHealthOfficesTable extends Migration
         Schema::create('health_offices', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name')->unique();
+            $table->integer('user_id');
             $table->timestamps();
         });
     }

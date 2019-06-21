@@ -5,17 +5,21 @@ namespace App\Http\Controllers;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Firebase\JWT\JWT;
 
 class AuthController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    
+    public function jwt(User $user)
     {
-        //
+        $payload = [
+            'iss' => 'app-jwt',
+            'sub' => $user->id,
+            'iat' => time(),
+            'exp' => time() + 60*60
+        ];
+
+        return JWT::encode($payload, env('JWT_SECRET'));
     }
 
     /**
@@ -67,8 +71,24 @@ class AuthController extends Controller
             'email' => 'required|email',
             'password' => 'required'
         ]);
-        $email = $request->input('email');
-        $password = $request->input('password');
-        return "It Works!";
+
+        $user = User::where('email', $request->input('email'))->first();
+
+        if (!$user) {
+            return response()->json([
+                'error' => 'Email does not exist.'
+            ], 400);
+        }
+
+        if ($request->input('password') == Crypt::decrypt($user->password)) {
+            return response()->json([
+                'token' => $this->jwt($user),
+                'user_id' => $user->id
+            ], 200);
+        }
+
+        return response()->json([
+            'error' => 'Email or password is wrong.'
+        ], 400);
     }
 }

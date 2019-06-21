@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\HealthOffice;
 
 class HealthOfficeController extends Controller
 {   
@@ -13,7 +14,7 @@ class HealthOfficeController extends Controller
      */
     public function __construct()
     {
-        // $this->middleware('name);
+        $this->middleware('jwt.auth');
     }
 
     /**
@@ -23,7 +24,8 @@ class HealthOfficeController extends Controller
      */
     public function index()
     {
-        return "It works!";
+        $healthoffices = HealthOffice::all();
+        return response()->json($healthoffices, 200);
     }
 
     /**
@@ -37,8 +39,20 @@ class HealthOfficeController extends Controller
         $this->validate($request, [
             'name' => 'required'
         ]);
-        $name = $request->input('name');
-        return "It works!";
+        $data = [
+            'name' => $request->input('name'),
+            'user_id' => $request->user_id
+        ];
+        $healthofficeIsExist = HealthOffice::where('name', $data['name'])->where('user_id', $data['user_id'])->count();
+        
+        if ($healthofficeIsExist) {
+            return response()->json(["msg" => "This health office already exist"], 400);
+        }
+        $healthoffice = new HealthOffice($data);
+        if ($healthoffice->save()) {
+            return response()->json($healthoffice, 201);
+        }
+        return response()->json(["msg" => "Something went wrong"], 400);
     }
 
     /**
@@ -49,7 +63,8 @@ class HealthOfficeController extends Controller
      */
     public function show($id)
     {
-        return "It works!";
+        $healthoffice = HealthOffice::findOrFail($id);
+        return response()->json($healthoffice, 200);
     }
 
     /**
@@ -64,8 +79,10 @@ class HealthOfficeController extends Controller
         $this->validate($request, [
             'name' => 'required'
         ]);
-        $name = $request->input('name');
-        return "It works!";
+        $healthoffice = HealthOffice::findOrFail($id);
+        $healthoffice->name = $request->input('name');
+        $healthoffice->update();
+        return response()->json($healthoffice, 200);
     }
 
     /**
@@ -76,6 +93,8 @@ class HealthOfficeController extends Controller
      */
     public function destroy($id)
     {
-        return "It works!";
+        $healthoffice = HealthOffice::findOrFail($id);
+        $healthoffice->delete();
+        return response()->json(['msg' => 'Health office deleted'], 200);
     }
 }
