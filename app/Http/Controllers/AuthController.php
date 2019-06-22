@@ -82,8 +82,7 @@ class AuthController extends Controller
 
         if ($request->input('password') == Crypt::decrypt($user->password)) {
             return response()->json([
-                'token' => $this->jwt($user),
-                'user_id' => $user->id
+                'token' => $this->jwt($user)
             ], 200);
         }
 

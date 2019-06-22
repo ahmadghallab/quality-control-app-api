@@ -22,9 +22,9 @@ class HealthOfficeController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $healthoffices = HealthOffice::all();
+        $healthoffices = HealthOffice::where('user_id', $request->user_id)->get();
         return response()->json($healthoffices, 200);
     }
 
@@ -43,16 +43,13 @@ class HealthOfficeController extends Controller
             'name' => $request->input('name'),
             'user_id' => $request->user_id
         ];
-        $healthofficeIsExist = HealthOffice::where('name', $data['name'])->where('user_id', $data['user_id'])->count();
-        
-        if ($healthofficeIsExist) {
-            return response()->json(["msg" => "This health office already exist"], 400);
-        }
-        $healthoffice = new HealthOffice($data);
-        if ($healthoffice->save()) {
+        try {
+            $healthoffice = new HealthOffice($data);
+            $healthoffice->save();
             return response()->json($healthoffice, 201);
+        } catch (\Exception $e) {
+            return response()->json(["msg" => $e->getMessage()], 400);
         }
-        return response()->json(["msg" => "Something went wrong"], 400);
     }
 
     /**
