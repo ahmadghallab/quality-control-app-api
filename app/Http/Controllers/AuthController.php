@@ -16,7 +16,7 @@ class AuthController extends Controller
             'iss' => 'app-jwt',
             'sub' => $user->id,
             'iat' => time(),
-            'exp' => time() + 60*60
+            'exp' => time() + 60*60*24
         ];
 
         return JWT::encode($payload, env('JWT_SECRET'));

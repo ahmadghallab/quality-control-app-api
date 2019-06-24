@@ -11,9 +11,20 @@
 |
 */
 $router->group(['prefix' => 'api/v1'], function () use ($router) {
+    // Users routes
+    $router->post('user', [
+        'uses' => 'AuthController@store'
+    ]);
+    $router->post('user/signin', [
+        'uses' => 'AuthController@signin'
+    ]);
+    
     // Health office routes
     $router->get('healthoffice', [
         'uses' => 'HealthOfficeController@index'
+    ]);
+    $router->post('healthoffice', [
+        'uses' => 'HealthOfficeController@store'
     ]);
     $router->get('healthoffice/{id}', [
         'uses' => 'HealthOfficeController@show'
@@ -24,14 +35,52 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
     $router->delete('healthoffice/{id}', [
         'uses' => 'HealthOfficeController@destroy'
     ]);
-    $router->post('healthoffice', [
-        'uses' => 'HealthOfficeController@store'
+
+    // Section routes
+    $router->get('section', [
+        'uses' => 'SectionController@index'
     ]);
-    // Users routes
-    $router->post('user', [
-        'uses' => 'AuthController@store'
+    $router->post('section', [
+        'uses' => 'SectionController@store'
     ]);
-    $router->post('user/signin', [
-        'uses' => 'AuthController@signin'
+    $router->get('section/{id}', [
+        'uses' => 'SectionController@show'
+    ]);
+    $router->patch('section/{id}', [
+        'uses' => 'SectionController@update'
+    ]);
+    $router->delete('section/{id}', [
+        'uses' => 'SectionController@destroy'
+    ]);
+
+    // Criteria routes
+    $router->get('criteria', [
+        'uses' => 'CriteriaController@index'
+    ]);
+    $router->post('criteria', [
+        'uses' => 'CriteriaController@store'
+    ]);
+    $router->get('criteria/{id}', [
+        'uses' => 'CriteriaController@show'
+    ]);
+    $router->patch('criteria/{id}', [
+        'uses' => 'CriteriaController@update'
+    ]);
+    $router->delete('criteria/{id}', [
+        'uses' => 'CriteriaController@destroy'
+    ]);
+
+    // Ecaluation routes
+    $router->post('evaluation', [
+        'uses' => 'EvaluationController@store'
+    ]);
+    $router->get('evaluation/{id}', [
+        'uses' => 'EvaluationController@show'
+    ]);
+    $router->patch('evaluation/{id}', [
+        'uses' => 'EvaluationController@update'
+    ]);
+    $router->delete('evaluation/{id}', [
+        'uses' => 'EvaluationController@destroy'
     ]);
 });

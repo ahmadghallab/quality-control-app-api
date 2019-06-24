@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\HealthOffice;
+use App\Section;
 
-class HealthOfficeController extends Controller
+class SectionController extends Controller
 {   
     /**
      * Create a new controller instance.
@@ -20,13 +20,12 @@ class HealthOfficeController extends Controller
     /**
      * Display a listing of the resource.
      * 
-     * @param \Illuminate\Http\Request
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        $healthoffices = HealthOffice::where('user_id', $request->user_id)->get();
-        return response()->json($healthoffices, 200);
+        $sections = Section::all();
+        return response()->json($sections, 200);
     }
 
     /**
@@ -41,13 +40,12 @@ class HealthOfficeController extends Controller
             'name' => 'required'
         ]);
         $data = [
-            'name' => $request->input('name'),
-            'user_id' => $request->user_id
+            'name' => $request->input('name')
         ];
         try {
-            $healthoffice = new HealthOffice($data);
-            $healthoffice->save();
-            return response()->json($healthoffice, 201);
+            $section = new Section($data);
+            $section->save();
+            return response()->json($section, 201);
         } catch (\Exception $e) {
             return response()->json(["msg" => $e->getMessage()], 400);
         }
@@ -61,8 +59,8 @@ class HealthOfficeController extends Controller
      */
     public function show($id)
     {
-        $healthoffice = HealthOffice::findOrFail($id);
-        return response()->json($healthoffice, 200);
+        $section = Section::findOrFail($id);
+        return response()->json($section, 200);
     }
 
     /**
@@ -77,10 +75,10 @@ class HealthOfficeController extends Controller
         $this->validate($request, [
             'name' => 'required'
         ]);
-        $healthoffice = HealthOffice::findOrFail($id);
-        $healthoffice->name = $request->input('name');
-        $healthoffice->update();
-        return response()->json($healthoffice, 200);
+        $section = Section::findOrFail($id);
+        $section->name = $request->input('name');
+        $section->update();
+        return response()->json($section, 200);
     }
 
     /**
@@ -91,8 +89,8 @@ class HealthOfficeController extends Controller
      */
     public function destroy($id)
     {
-        $healthoffice = HealthOffice::findOrFail($id);
-        $healthoffice->delete();
-        return response()->json(['msg' => 'Health office deleted'], 200);
+        $section = Section::findOrFail($id);
+        $section->delete();
+        return response()->json(['msg' => 'Record deleted'], 200);
     }
 }
